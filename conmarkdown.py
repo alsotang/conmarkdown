@@ -15,7 +15,6 @@
 
 import re
 
-#import bs4
 from bs4 import BeautifulSoup
 
 
@@ -25,9 +24,11 @@ def case_tag(tag, contents):
         contents += '\n'
     elif tag_name == 'strong':
         contents = '**' + contents + '**'
+    elif tag_name == 'em':
+        contents = '*%s*' % contents
     elif re.match(r'h(\d)', tag_name):
         if tag.get('id'):
-            contents = unicode(tag)
+            contents = unicode(tag) + '\n'
         else:
             contents = int(tag_name[-1]) * '#' + contents + '\n'
     elif tag_name == 'li':
@@ -41,6 +42,8 @@ def case_tag(tag, contents):
         contents = '\n'.join('    ' + line for line in contents.split('\n'))
     elif tag_name == 'code' and tag.parent.name != 'pre':
         contents = '`%s`' % (contents)
+    elif tag_name == 'hr':
+        contents = '* * *' + '\n'
     return contents
 
 def convert(html_data):
@@ -62,13 +65,15 @@ def convert(html_data):
     return case_tag(html_data, ''.join(result_data))
         
 
-if __name__ == '__main__':
-    FILENAME = 'test'
+def conmarkdown(filename):
+    FILENAME = filename or 'test'
     soup = BeautifulSoup(open(FILENAME + '.html'))
     soup = soup.body
     result = convert(soup)
     with open(FILENAME + '_converted.md', 'w') as wf:
         print >> wf, result.encode('utf-8')
 
-
-
+if __name__ == '__main__':
+    # 'test' is a HTML filename which would turn into 'test.html' later.  
+    # and the result file named 'test_converted.md'.
+    conmarkdown('test') 
