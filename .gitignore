@@ -16,3 +16,9 @@ tmp
 .yardoc
 _yardoc
 doc/
+
+# vim
+*.swp
+
+
+test_converted.md
